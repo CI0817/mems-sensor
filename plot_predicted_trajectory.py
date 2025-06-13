@@ -3,65 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-def generate_dummy_data(filepath):
-    """
-    Generates a dummy CSV file with a plausible rocket trajectory.
-    This version generates some negative position values to test the abs() correction.
-    
-    Args:
-        filepath (str): The path where the dummy CSV will be saved.
-    """
-    print("Generating dummy data file...")
-    # Create directory if it doesn't exist
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    
-    # Parameters for a simple parabolic flight
-    time_steps = 200
-    total_time_s = 100
-    g = -9.81  # gravity
-    initial_velocity_z = 100
-    
-    # Timestamps in milliseconds
-    timestamps = np.linspace(0, total_time_s * 1000, time_steps)
-    
-    # Position data - now includes negative values
-    time_s = timestamps / 1000
-    pos_x = 10 * time_s - 500  # Will be negative for the first half
-    pos_y = 8 * time_s - 150   # Will be negative initially
-    pos_z = initial_velocity_z * time_s + 0.5 * g * time_s**2
-    
-    # Orientation data (quaternions for a pitch-up and roll)
-    pitch_angle = np.pi / 2 - (time_s/total_time_s * np.pi/2) # Pitch up
-    roll_angle = np.pi / 4 * np.sin(time_s * 0.1) # Slow roll
-    yaw_angle = np.pi/6 * (time_s/total_time_s) # Slow yaw
-    
-    # This is a simplified combination, for real scenarios use proper quaternion multiplication
-    qw_p, qx_p, qy_p, qz_p = np.cos(pitch_angle/2), 0, np.sin(pitch_angle/2), 0
-    qw_r, qx_r, qy_r, qz_r = np.cos(roll_angle/2), np.sin(roll_angle/2), 0, 0
-    qw_y, qx_y, qy_y, qz_y = np.cos(yaw_angle/2), 0, 0, np.sin(yaw_angle/2)
-
-    # Simple combination for dummy data (not a real multiplication)
-    quat_w = qw_p * qw_r * qw_y
-    quat_x = qx_r
-    quat_y = qy_p
-    quat_z = qz_y
-    
-    # Create DataFrame
-    df = pd.DataFrame({
-        'timestamp_ms': timestamps.astype(np.int64),
-        'pos_x': pos_x,
-        'pos_y': pos_y,
-        'pos_z': pos_z,
-        'quat_w': quat_w,
-        'quat_x': quat_x,
-        'quat_y': quat_y,
-        'quat_z': quat_z,
-    })
-    
-    # Save to CSV
-    df.to_csv(filepath, index=False)
-    print(f"Dummy data saved to '{filepath}'")
-
 def quaternion_to_euler(w, x, y, z):
     """
     Convert a quaternion into Euler angles (roll, pitch, yaw) in degrees.
@@ -183,7 +124,7 @@ def plot_rocket_trajectory(file_path, start_time_s=None, end_time_s=None):
     plt.show()
 
 if __name__ == '__main__':
-    file_path = 'predicted_trajectory/predicted_trajectory_20250429_052908.csv'
+    file_path = 'data/predicted_trajectory/predicted_trajectory_20250429_052908.csv'
     
     # --- Set your desired time range for clipping here (in seconds) ---
     # Use 'None' to disable clipping on one end (e.g., start_time_s=None plots from the very beginning)
@@ -191,10 +132,6 @@ if __name__ == '__main__':
     # You can change this to 0 and 8000 for your actual data.
     start_time = 10
     end_time = 8000
-
-    if not os.path.exists(file_path):
-        print(f"Could not find '{file_path}'.")
-        generate_dummy_data(file_path)
     
     # Run the plotting function with the specified time range
     plot_rocket_trajectory(file_path, start_time_s=None, end_time_s=None)

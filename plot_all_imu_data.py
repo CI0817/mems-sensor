@@ -79,7 +79,7 @@ def plot_total_acceleration_subplots(csv_filepath, x_min_sec=None, x_max_sec=Non
 if __name__ == '__main__':
     # --- IMPORTANT ---
     # Replace this with the actual path to your CSV file.
-    file_path = 'all_imu_data/all_imu_data_20250429_052908.csv'
+    file_path = 'data/all_imu_data/all_imu_data_20250429_052908.csv'
     
     # Call the function to generate the plot.
     # You can now specify the time range in seconds.
