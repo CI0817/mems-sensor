@@ -1,0 +1,17 @@
+[Unit]
+Description=Rocket Launch Listener Service
+Wants=network.target
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/home/chhay/rocket_scripts
+ExecStartPre=/home/chhay/rocket_scripts/prepare-idle-state.sh
+ExecStart=/home/chhay/rocket_scripts/.venv/bin/python3 /home/chhay/rocket_scripts/listener.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
